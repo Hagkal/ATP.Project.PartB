@@ -4,9 +4,28 @@ import algorithms.mazeGenerators.*;
 
 public class RunMazeGenerator {
         public static void main(String[] args) {
-            testMazeGenerator(new SimpleMazeGenerator());
+            //testMazeGenerator(new SimpleMazeGenerator());
             //testMazeGenerator(new MyMazeGenerator());
+
+            testMazeToByte();
         }
+
+
+        private static void testMazeToByte(){
+            MyMazeGenerator gen = new MyMazeGenerator();
+            Maze m = gen.generate(10, 10);
+            m.print();
+
+            System.out.println();
+
+            Maze m1 = new Maze(m.toByteArray());
+            m1.print();
+
+        }
+
+
+
+
         private static void testMazeGenerator(IMazeGenerator mazeGenerator) {
 // prints the time it takes the algorithm to run
             System.out.println(String.format("Maze generation time(ms): %s",
@@ -23,6 +42,5 @@ public class RunMazeGenerator {
 // prints the maze exit position
             System.out.println(String.format("Goal Position: %s",
                     maze.getGoalPosition()));
-
         }
     }
