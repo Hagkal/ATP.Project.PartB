@@ -1,5 +1,7 @@
 package algorithms.mazeGenerators;
 
+import java.util.ArrayList;
+
 public class Maze {
     private int [][] maze;
     private Position m_startPosition;
@@ -19,8 +21,139 @@ public class Maze {
 
 
     /**
+     * c'tor from byte array, with metadata fields:
+     * @param dataArray - the byte array given
+     */
+    public Maze(byte[] dataArray){
+        int startRow = getData(0, dataArray);
+        int startCol = getData(1, dataArray);
+        int goalRow = getData(2, dataArray);
+        int goalCol = getData(3, dataArray);
+        int mazeRow = getData(4, dataArray);
+        int mazeCol = getData(5, dataArray);
+
+        this.m_startPosition = new Position(startRow, startCol);
+        this.m_goalPosition = new Position(goalRow, goalCol);
+        this.maze = new int[mazeRow][mazeCol];
+
+        int arrIdx = getPointer(6, dataArray);
+        for (int i = 0; arrIdx < dataArray.length && i<mazeRow; i++){
+            for (int j=0; j < mazeCol; j++, arrIdx++)
+                maze[i][j] = dataArray[arrIdx];
+        }
+
+    }
+
+    /**
+     * returns a pointer to the proper metadata index
+     * @param amount - the metadata field desired
+     * @param data - the byte array
+     * @return - index of the desired metadata start point
+     */
+    private int getPointer(int amount, byte[] data){
+        int dataPointer = 0;
+        while (amount > 0){
+            if (data[dataPointer] == -1)
+                amount--;
+            dataPointer++;
+        }
+        return dataPointer;
+    }
+
+    /**
+     * this method will get the Integer representation of the proper coded byte metadata
+     * as requested by the amount field
+     * @param amount - the metadata desired to decode
+     * @param data - the byte array
+     * @return - int representation of the metadata
+     */
+    private int getData(int amount, byte[] data){
+        int toReturn = 0;
+        int dataPointer = getPointer(amount, data);
+        int numOfDigits = 0;
+
+        //number of digits in the number
+        for (int l = dataPointer; data[l] != -1; l++)
+            numOfDigits++;
+
+        while (data[dataPointer] != -1){
+            toReturn += data[dataPointer]*Math.pow(10, numOfDigits-1);
+            numOfDigits--;
+            dataPointer++;
+        }
+
+        return toReturn;
+    }
+
+
+    private ArrayList<String> splitNumbers(int number, String index){
+        ArrayList<String> toReturn = new ArrayList<String>();
+        String temp = number + "";
+        while (!temp.isEmpty()) {
+            toReturn.add("" + temp.charAt(0));
+            temp = temp.substring(1,temp.length());
+        }
+        return toReturn;
+    }
+
+    private ArrayList <String> arrToByte(){
+        ArrayList<String> toReturn = new ArrayList<>();
+        for (int i = 0; i < maze.length; i++)
+            for (int j = 0; j < maze[0].length; j++)
+                toReturn.add(maze[i][j]+"");
+        return toReturn;
+    }
+
+    public byte[] toByteArray(){
+        int rowStart = m_startPosition.getRowIndex();
+        int colStart = m_startPosition.getColumnIndex();
+        int rowGoal = m_goalPosition.getRowIndex();
+        int colGoal = m_goalPosition.getColumnIndex();
+        ArrayList<String> num = new ArrayList<String>();
+        num.addAll(splitNumbers(rowStart, "1"));
+        num.add("-1");
+        num.addAll(splitNumbers(colStart, "2"));
+        num.add("-1");
+        num.addAll(splitNumbers(rowGoal, "3"));
+        num.add("-1");
+        num.addAll(splitNumbers(colGoal, "4"));
+        num.add("-1");
+        num.addAll(splitNumbers(maze.length, "5"));
+        num.add("-1");
+        num.addAll(splitNumbers(maze[0].length, "6"));
+        num.add("-1");
+        byte[] toReturn = new byte[num.size() + maze.length * maze[0].length];
+        for (int i = 0; i < num.size(); i++) {
+            int temp = Integer.parseInt(num.get(i));
+            toReturn[i] = (byte)temp;
+        }
+        int numSize = num.size();
+        num.addAll(arrToByte());
+        for (int j = numSize; j < toReturn.length; j++) {
+            int temp = Integer.parseInt(num.get(j));
+            toReturn[j] = (byte) temp;
+        }
+        return toReturn;
+    }
+
+    /*
+    public byte[] toByteArray(){
+        int rowCount = (maze.length%254 == 0) ? maze.length/254 : (maze.length/254 + 1);
+        int colCount = (maze[0].length%254 == 0) ? maze[0].length/254 : (maze[0].length/254 + 1);
+
+        int goalRowCount = (m_goalPosition.getRowIndex()%254 == 0) ? m_goalPosition.getRowIndex()/254 : (m_goalPosition.getRowIndex()/254 + 1);
+        int goalColCount = (m_goalPosition.getColumnIndex()%254 == 0) ? m_goalPosition.getColumnIndex()/254 : (m_goalPosition.getColumnIndex()/254 + 1);
+        int startRowCount = (m_startPosition.getRowIndex()%254 == 0) ? m_startPosition.getRowIndex()/254 : (m_startPosition.getRowIndex()/254 + 1);
+        int startColCount = (m_startPosition.getColumnIndex()%254 == 0) ? m_startPosition.getColumnIndex()/254 : (m_startPosition.getColumnIndex()/254 + 1);
+
+        int size = 6 +
+        byte [] sendMe = new byte []
+    }
+    */
+
+    /**
      * this method will return the start position of this maze
-     * @return
+     * @return - Position of start
      */
     public Position getStartPosition(){
         return m_startPosition;
@@ -29,7 +162,7 @@ public class Maze {
 
     /**
      * this method will return the goal position of this maze
-     * @return
+     * @return Position of goal
      */
     public Position getGoalPosition(){
         return m_goalPosition;
@@ -38,9 +171,9 @@ public class Maze {
 
     /**
      * this method returns weather the index given is in the maze
-     * @param row
-     * @param col
-     * @return
+     * @param row - a given row index
+     * @param col - a given column index
+     * @return - true if in bound, false otherwise
      */
     private boolean isInBound(int row, int col){
         return (row < maze.length && col < maze[0].length && row >= 0 && col >= 0);
@@ -108,6 +241,5 @@ public class Maze {
 
         //return s;
     }
-
 
 }

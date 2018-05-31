@@ -210,7 +210,7 @@ public class MyMazeGenerator extends AMazeGenerator {
 
         do{
             pRow = (int) (mat.length * Math.random());
-            pCol= (int) (mat[0].length * Math.random());;
+            pCol= (int) (mat[0].length * Math.random());
 
             if (mat[pRow][pCol] == 0)
                 return new Position(pRow, pCol);
