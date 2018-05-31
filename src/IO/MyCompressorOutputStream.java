@@ -92,6 +92,7 @@ public class MyCompressorOutputStream extends OutputStream {
         }
 
         out.write(bval);
+        
     }
 
 }
