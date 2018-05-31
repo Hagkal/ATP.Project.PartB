@@ -7,7 +7,11 @@ public class RunMazeGenerator {
             //testMazeGenerator(new SimpleMazeGenerator());
             //testMazeGenerator(new MyMazeGenerator());
 
-            testMazeToByte();
+            //testMazeToByte();
+
+            int a = 130;
+            System.out.println((byte) a + "\n" + (230-256));
+
         }
 
 
