@@ -91,8 +91,6 @@ public class MyCompressorOutputStream extends OutputStream {
             }
         }
 
-        for (i = 0; i < bval.length; i++)
-            System.out.println(bval[i]);
         out.write(bval);
     }
 
