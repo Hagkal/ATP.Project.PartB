@@ -46,8 +46,9 @@ public class MyCompressorOutputStream extends OutputStream {
         int colMod = col % 8;
         int numOfBlocks = col / 8;
 
+        int size = (colMod == 0) ? (all.size()+row*numOfBlocks) : (all.size() + row + row*numOfBlocks);
 
-        byte[] bval = new byte[all.size() + row + row*numOfBlocks];
+        byte[] bval = new byte[size];
         int j = i;
 
         //adding binary strings to array list
@@ -92,7 +93,11 @@ public class MyCompressorOutputStream extends OutputStream {
                 bval[i] = (byte)temp;
             }
         }
-
+        /*
+        for (int k = 0; k < bval.length; k++)
+            System.out.print(bval[k] + ",");
+        System.out.println();
+        */
         out.write(bval);
         
     }

@@ -1,11 +1,28 @@
 package algorithms.mazeGenerators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Maze {
     private int [][] maze;
     private Position m_startPosition;
     private Position m_goalPosition;
+
+    public static void main(String args[]){
+        MyMazeGenerator gen = new MyMazeGenerator();
+        Maze m = gen.generate(100, 100);
+        m.print();
+        byte[] b = m.toByteArray();
+        System.out.println();
+        Maze m1 = new Maze(b);
+        m1.print();
+
+        System.out.println(m.equals(m1));
+        System.out.println(Arrays.equals(b, m1.toByteArray()));
+
+
+    }
 
     /**
      * Maze class c'tor
@@ -144,20 +161,6 @@ public class Maze {
         return toReturn;
     }
 
-    /*
-    public byte[] toByteArray(){
-        int rowCount = (maze.length%254 == 0) ? maze.length/254 : (maze.length/254 + 1);
-        int colCount = (maze[0].length%254 == 0) ? maze[0].length/254 : (maze[0].length/254 + 1);
-
-        int goalRowCount = (m_goalPosition.getRowIndex()%254 == 0) ? m_goalPosition.getRowIndex()/254 : (m_goalPosition.getRowIndex()/254 + 1);
-        int goalColCount = (m_goalPosition.getColumnIndex()%254 == 0) ? m_goalPosition.getColumnIndex()/254 : (m_goalPosition.getColumnIndex()/254 + 1);
-        int startRowCount = (m_startPosition.getRowIndex()%254 == 0) ? m_startPosition.getRowIndex()/254 : (m_startPosition.getRowIndex()/254 + 1);
-        int startColCount = (m_startPosition.getColumnIndex()%254 == 0) ? m_startPosition.getColumnIndex()/254 : (m_startPosition.getColumnIndex()/254 + 1);
-
-        int size = 6 +
-        byte [] sendMe = new byte []
-    }
-    */
 
     /**
      * this method will return the start position of this maze
@@ -203,7 +206,9 @@ public class Maze {
 
     @Override
     public String toString() {
-        return "";
+        return String.format("Size: %dx%d, Start: [%d,%d], End: [%d,%d]",
+                maze.length, maze[0].length, m_startPosition.getRowIndex(), m_startPosition.getColumnIndex(),
+                m_goalPosition.getRowIndex(), m_goalPosition.getColumnIndex());
     }
 
     /**
@@ -250,4 +255,18 @@ public class Maze {
         //return s;
     }
 
+
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof Maze))
+            return false;
+
+        Maze m = (Maze) o;
+        for (int i=0; i<m.maze.length; i++)
+            for (int j = 0; j<m.maze[0].length; j++)
+                if (m.maze[i][j] != maze[i][j])
+                    return false;
+
+        return true;
+    }
 }

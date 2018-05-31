@@ -51,34 +51,35 @@ public class MyDecompressorInputStream extends InputStream {
         /* getting compressed byte into an array list */
         ArrayList<Byte> arrayList = new ArrayList<>();
         int tmp = in.read();
-        while (tmp != -1){
+        while (tmp != -1) {
             arrayList.add((byte) tmp);
             tmp = in.read();
         }
+
         /* getting compressed bytes into an array */
         int p = 0;
         byte[] arr = new byte[arrayList.size()];
         for (Byte by : arrayList)
             arr[p++] = by;
 
-        // extract metadata from the compressed array
-        int startRow = getData(0, arr);
-        int startCol = getData(1, arr);
-        int goalRow = getData(2, arr);
-        int goalCol = getData(3, arr);
-        int mazeRow = getData(4, arr);
+/*
+        for (int y = 0; y<arr.length; y++)
+            System.out.print(arr[y] + ",");
+        System.out.println();
+*/
+        // extract relevant metadata from the compressed array
         int mazeCol = getData(5, arr);
 
         int compressedIdx = getPointer(6, arr);
         int uncompreesedIdx = compressedIdx;
         boolean flag = (mazeCol%8 == 0);
 
-        // copying metadata elements to the new uncompressed array - target
+        // copying metadata elements to the new uncompressed array: b
         System.arraycopy(arr, 0, b, 0, compressedIdx);
 
         if (flag) { // maze col num is divided by 8
             for (int i = compressedIdx; i < arr.length; i++) {
-                byte[] binary = (arr[i]<0) ? binaryParse((byte)(256 + arr[i])) : binaryParse(arr[i]);
+                byte[] binary = (arr[i]<0) ? binaryParse((256 + arr[i])) : binaryParse(arr[i]);
                 System.arraycopy(binary, 0, b, uncompreesedIdx, binary.length);
                 uncompreesedIdx += 8;
             }
@@ -86,13 +87,13 @@ public class MyDecompressorInputStream extends InputStream {
         else{ // maze col num is NOT divided by 8
             for (int i = compressedIdx, j=0; i < arr.length; i++) {
                 if (j == mazeCol/8){
-                    byte[] binary = (arr[i]<0) ? binaryParse((byte)(256 + arr[i])) : binaryParse(arr[i]);
+                    byte[] binary = (arr[i]<0) ? binaryParse((256 + arr[i])) : binaryParse(arr[i]);
                     System.arraycopy(binary, 8-mazeCol%8, b, uncompreesedIdx, mazeCol%8);
                     uncompreesedIdx += mazeCol%8;
                     j=0;
                 }
                 else{
-                    byte[] binary = (arr[i]<0) ? binaryParse((byte)(256 + arr[i])) : binaryParse(arr[i]);
+                    byte[] binary = (arr[i]<0) ? binaryParse((256 + arr[i])) : binaryParse(arr[i]);
                     System.arraycopy(binary, 0, b, uncompreesedIdx, binary.length);
                     uncompreesedIdx += 8;
                     j++;
@@ -100,6 +101,7 @@ public class MyDecompressorInputStream extends InputStream {
 
             }
         }
+
 
         return  arr.length;
     }
@@ -110,7 +112,7 @@ public class MyDecompressorInputStream extends InputStream {
      * @param num - the number to tranform to binary
      * @return - an array of bytes represting a number in range 0-255
      */
-    private byte[] binaryParse(byte num){
+    private byte[] binaryParse(int num){
         byte[] toReturn = new byte[8];
         int idx = 7;
 
