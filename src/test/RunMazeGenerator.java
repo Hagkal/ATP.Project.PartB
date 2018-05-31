@@ -4,15 +4,15 @@ import algorithms.mazeGenerators.*;
 
 public class RunMazeGenerator {
         public static void main(String[] args) {
-            testMazeGenerator(new SimpleMazeGenerator());
-            //testMazeGenerator(new MyMazeGenerator());
+            //testMazeGenerator(new SimpleMazeGenerator());
+            testMazeGenerator(new MyMazeGenerator());
         }
         private static void testMazeGenerator(IMazeGenerator mazeGenerator) {
 // prints the time it takes the algorithm to run
             System.out.println(String.format("Maze generation time(ms): %s",
-                    mazeGenerator.measureAlgorithmTimeMillis(1000/*rows*/,1000/*columns*/)));
+                    mazeGenerator.measureAlgorithmTimeMillis(500/*rows*/,500/*columns*/)));
 // generate another maze
-            Maze maze = mazeGenerator.generate(50/*rows*/, 50/*columns*/);
+            Maze maze = mazeGenerator.generate(20/*rows*/, 20/*columns*/);
 // prints the maze
             maze.print();
 // get the maze entrance
@@ -23,6 +23,5 @@ public class RunMazeGenerator {
 // prints the maze exit position
             System.out.println(String.format("Goal Position: %s",
                     maze.getGoalPosition()));
-
         }
     }
