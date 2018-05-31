@@ -2,6 +2,7 @@ package IO;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 public class MyCompressorOutputStream extends OutputStream {
 
     private OutputStream out;
+
 
     public MyCompressorOutputStream (OutputStream OS){
         this.out = OS;
