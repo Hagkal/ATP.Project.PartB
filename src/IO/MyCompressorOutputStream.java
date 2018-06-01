@@ -1,6 +1,8 @@
 package IO;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 import java.math.BigInteger;
@@ -98,7 +100,8 @@ public class MyCompressorOutputStream extends OutputStream {
             System.out.print(bval[k] + ",");
         System.out.println();
         */
-        out.write(bval);
+        ObjectOutputStream o = new ObjectOutputStream(out);
+        o.writeObject(bval);
         
     }
 

@@ -5,6 +5,7 @@ import Server.IServerStrategy;
 //import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -25,7 +26,7 @@ public class Server {
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        threadPoolExecutor.setCorePoolSize(6);
+        //  threadPoolExecutor.setCorePoolSize(6);
     }
 
     public void start() {

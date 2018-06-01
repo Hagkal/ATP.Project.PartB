@@ -1,28 +1,11 @@
 package algorithms.mazeGenerators;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class Maze {
     private int [][] maze;
     private Position m_startPosition;
     private Position m_goalPosition;
-
-    public static void main(String args[]){
-        MyMazeGenerator gen = new MyMazeGenerator();
-        Maze m = gen.generate(100, 100);
-        m.print();
-        byte[] b = m.toByteArray();
-        System.out.println();
-        Maze m1 = new Maze(b);
-        m1.print();
-
-        System.out.println(m.equals(m1));
-        System.out.println(Arrays.equals(b, m1.toByteArray()));
-
-
-    }
 
     /**
      * Maze class c'tor
@@ -102,6 +85,7 @@ public class Maze {
         return toReturn;
     }
 
+
     private ArrayList<String> splitNumbers(int number){
         ArrayList<String> toReturn = new ArrayList<String>();
         String temp = number + "";
@@ -113,6 +97,7 @@ public class Maze {
         return toReturn;
     }
 
+
     private ArrayList <String> arrToByte(){
         ArrayList<String> toReturn = new ArrayList<>();
         for (int i = 0; i < maze.length; i++)
@@ -121,6 +106,7 @@ public class Maze {
             }
         return toReturn;
     }
+
 
     public byte[] toByteArray(){
         int rowStart = m_startPosition.getRowIndex();
@@ -204,13 +190,6 @@ public class Maze {
     }
 
 
-    @Override
-    public String toString() {
-        return String.format("Size: %dx%d, Start: [%d,%d], End: [%d,%d]",
-                maze.length, maze[0].length, m_startPosition.getRowIndex(), m_startPosition.getColumnIndex(),
-                m_goalPosition.getRowIndex(), m_goalPosition.getColumnIndex());
-    }
-
     /**
      * this method will print the maze as is
      */
@@ -268,5 +247,13 @@ public class Maze {
                     return false;
 
         return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return String.format("Size: %dx%d, Start: [%d,%d], End: [%d,%d]",
+                maze.length, maze[0].length, m_startPosition.getRowIndex(), m_startPosition.getColumnIndex(),
+                m_goalPosition.getRowIndex(), m_goalPosition.getColumnIndex());
     }
 }

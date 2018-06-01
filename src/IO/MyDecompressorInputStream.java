@@ -2,6 +2,7 @@ package IO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class MyDecompressorInputStream extends InputStream {
@@ -49,24 +50,38 @@ public class MyDecompressorInputStream extends InputStream {
     //@Override
     public int read(byte[] b) throws IOException {
         /* getting compressed byte into an array list */
-        ArrayList<Byte> arrayList = new ArrayList<>();
+        //ArrayList<Byte> arrayList = new ArrayList<>();
+        /*
         int tmp = in.read();
         while (tmp != -1) {
             arrayList.add((byte) tmp);
             tmp = in.read();
         }
+        */
 
-        /* getting compressed bytes into an array */
+
+        /* getting compressed bytes into an array
         int p = 0;
         byte[] arr = new byte[arrayList.size()];
         for (Byte by : arrayList)
             arr[p++] = by;
-
-/*
+        */
+        /*
         for (int y = 0; y<arr.length; y++)
             System.out.print(arr[y] + ",");
         System.out.println();
-*/
+        */
+
+
+        ObjectInputStream in2 = new ObjectInputStream(in);
+        /* getting compressed bytes into an array*/
+        byte [] arr = new byte[0];
+        try {
+            arr = (byte[]) in2.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
         // extract relevant metadata from the compressed array
         int mazeCol = getData(5, arr);
 
