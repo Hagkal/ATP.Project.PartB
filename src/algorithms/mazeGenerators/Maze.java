@@ -1,11 +1,28 @@
 package algorithms.mazeGenerators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Maze {
     private int [][] maze;
     private Position m_startPosition;
     private Position m_goalPosition;
+
+    public static void main(String args[]){
+        MyMazeGenerator gen = new MyMazeGenerator();
+        Maze m = gen.generate(100, 100);
+        m.print();
+        byte[] b = m.toByteArray();
+        System.out.println();
+        Maze m1 = new Maze(b);
+        m1.print();
+
+        System.out.println(m.equals(m1));
+        System.out.println(Arrays.equals(b, m1.toByteArray()));
+
+
+    }
 
     /**
      * Maze class c'tor
@@ -133,9 +150,21 @@ public class Maze {
         return toReturn;
     }
 
+
+    private ArrayList<String> splitNumbers(int number, String index){
+        ArrayList<String> toReturn = new ArrayList<String>();
+        String temp = number + "";
+        while (!temp.isEmpty()) {
+            toReturn.add("" + temp.charAt(0));
+            temp = temp.substring(1,temp.length());
+        }
+        return toReturn;
+    }
+
+
     /**
      * this method will return the start position of this maze
-     * @return
+     * @return - Position of start
      */
     public Position getStartPosition(){
         return m_startPosition;
@@ -144,7 +173,7 @@ public class Maze {
 
     /**
      * this method will return the goal position of this maze
-     * @return
+     * @return Position of goal
      */
     public Position getGoalPosition(){
         return m_goalPosition;
@@ -153,9 +182,9 @@ public class Maze {
 
     /**
      * this method returns weather the index given is in the maze
-     * @param row
-     * @param col
-     * @return
+     * @param row - a given row index
+     * @param col - a given column index
+     * @return - true if in bound, false otherwise
      */
     private boolean isInBound(int row, int col){
         return (row < maze.length && col < maze[0].length && row >= 0 && col >= 0);
@@ -177,7 +206,9 @@ public class Maze {
 
     @Override
     public String toString() {
-        return "";
+        return String.format("Size: %dx%d, Start: [%d,%d], End: [%d,%d]",
+                maze.length, maze[0].length, m_startPosition.getRowIndex(), m_startPosition.getColumnIndex(),
+                m_goalPosition.getRowIndex(), m_goalPosition.getColumnIndex());
     }
 
     /**
@@ -224,4 +255,18 @@ public class Maze {
         //return s;
     }
 
+
+    @Override
+    public boolean equals(Object o){
+        if (!(o instanceof Maze))
+            return false;
+
+        Maze m = (Maze) o;
+        for (int i=0; i<m.maze.length; i++)
+            for (int j = 0; j<m.maze[0].length; j++)
+                if (m.maze[i][j] != maze[i][j])
+                    return false;
+
+        return true;
+    }
 }

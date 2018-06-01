@@ -15,6 +15,12 @@ public class MyMazeGenerator extends AMazeGenerator {
             rows = 10;
             columns = 10;
         }
+        else if (rows == 1 && columns == 1){
+            int mat[][] = new int[1][1];
+            mat[0][0] = 0;
+            return new Maze(mat, new Position(0,0), new Position(0,0));
+        }
+
 
         // making the matrix and list of positions
         int[][] matrix = new int[rows][columns];
@@ -210,7 +216,7 @@ public class MyMazeGenerator extends AMazeGenerator {
 
         do{
             pRow = (int) (mat.length * Math.random());
-            pCol= (int) (mat[0].length * Math.random());;
+            pCol= (int) (mat[0].length * Math.random());
 
             if (mat[pRow][pCol] == 0)
                 return new Position(pRow, pCol);
