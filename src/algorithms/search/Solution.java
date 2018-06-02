@@ -1,8 +1,9 @@
 package algorithms.search;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Solution {
+public class Solution implements Serializable {
 
     private ArrayList<AState> m_solutionPath;
 
@@ -10,7 +11,7 @@ public class Solution {
      * Solution class c'tor
      * @param goalState - path is found from the goal state
      */
-    public Solution(AState goalState) {
+    public Solution(AState goalState){
         // init the array list
         this.m_solutionPath = new ArrayList<>();
 

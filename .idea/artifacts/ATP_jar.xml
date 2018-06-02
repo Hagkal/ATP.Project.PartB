@@ -1,6 +1,5 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="ATP:jar">
-    <output-path />
     <root id="archive" name="ATP.jar">
       <element id="module-output" name="ATP - Project - PartB" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/junit/jupiter/junit-jupiter-api/5.0.0/junit-jupiter-api-5.0.0.jar" path-in-jar="/" />
