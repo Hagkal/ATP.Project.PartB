@@ -15,8 +15,13 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             int [] dim = (int[])fromClient.readObject();
             Maze m = new MyMazeGenerator().generate(dim[0], dim[1]);
             byte[] toSend = m.toByteArray();
-            MyCompressorOutputStream compress = new MyCompressorOutputStream(toClient);
+            ByteArrayOutputStream arr = new ByteArrayOutputStream();
+            MyCompressorOutputStream compress = new MyCompressorOutputStream(arr);
             compress.write(toSend);
+            compress.flush();
+            compress.close();
+
+            toClient.writeObject(arr.toByteArray());
             
         } catch (IOException e) {
             e.printStackTrace();

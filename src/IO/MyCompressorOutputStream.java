@@ -101,7 +101,10 @@ public class MyCompressorOutputStream extends OutputStream {
         System.out.println();
         */
         ObjectOutputStream o = new ObjectOutputStream(out);
+        o.flush();
         o.writeObject(bval);
+        o.flush();
+        o.close();
         
     }
 

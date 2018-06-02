@@ -30,6 +30,7 @@ public class Server {
     }
 
     public void start() {
+
         new Thread(() -> {
             runServer();
         }).start();
@@ -44,7 +45,8 @@ public class Server {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
                     //LOG.info(String.format("Client excepted: %s", clientSocket.toString()));
-                    threadPoolExecutor.execute(new Thread(() -> handleClient(clientSocket)));
+                    //threadPoolExecutor.execute(new Thread(() -> handleClient(clientSocket)));
+                    handleClient(clientSocket);
                 } catch (SocketTimeoutException e) {
                     //LOG.debug("SocketTimeout - No clients pending!");
                 }
