@@ -1,14 +1,22 @@
 package Server;
 
 import algorithms.mazeGenerators.Maze;
-import algorithms.search.BestFirstSearch;
-import algorithms.search.ISearchingAlgorithm;
-import algorithms.search.SearchableMaze;
-import algorithms.search.Solution;
-
+import algorithms.search.*;
+import sun.awt.Mutex;
 import java.io.*;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
+
+    private ConcurrentHashMap<Integer, Mutex> mutexMap;
+    private Mutex m = new Mutex();
+
+    public ServerStrategySolveSearchProblem() {
+        mutexMap = new ConcurrentHashMap<>();
+    }
+
+  
     @Override
     public void serverStrategy(InputStream inFromClient, OutputStream outToClient) {
         try{
@@ -20,16 +28,43 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
             Maze toSolve = (Maze) fromClient.readObject();
             ISearchingAlgorithm searcher = new BestFirstSearch();
 
-            /*
-            here should be the part where we search for the maze in a file and seek the solution
-             */
+            byte[] byteStyle = toSolve.toByteArray();
+            int hash = Arrays.hashCode(byteStyle);
+            File properMaze = new File("" + hash);
+
+            // Taking care of potential races
+            m.lock();
+            boolean inMap = mutexMap.containsKey(hash);
+            if (inMap){
+                mutexMap.get(hash).lock();
+                m.unlock();
+            }
+            else{
+                Mutex tmp = new Mutex();
+                mutexMap.put(hash, tmp);
+                m.unlock();
+                tmp.lock();
+            }
+
+            // checking if such maze already have been solved
+            boolean alreadySolved = properMaze.exists();
+            Solution sol;
 
             // if no such maze was found
-            Solution sol = searcher.solve(new SearchableMaze(toSolve));
-
-            /*
-            here should be the part that we make a new file for the maze and keep the solution
-             */
+            if (alreadySolved){
+                ObjectInputStream solGetter = new ObjectInputStream(new FileInputStream(properMaze));
+                sol = (Solution) solGetter.readObject();
+                solGetter.close();
+            }
+            else {
+                sol = searcher.solve(new SearchableMaze(toSolve));
+                ObjectOutputStream solWriter = new ObjectOutputStream(new FileOutputStream(properMaze));
+                solWriter.flush();
+                solWriter.writeObject(sol);
+                solWriter.flush();
+                solWriter.close();
+            }
+            mutexMap.get(hash).unlock();
 
             toClient.writeObject(sol);
             toClient.flush();
@@ -39,8 +74,6 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         catch (Exception e){
             e.printStackTrace();
         }
-
-
 
     }
 }

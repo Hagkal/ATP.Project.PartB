@@ -4,6 +4,7 @@ import IO.*;
 import algorithms.mazeGenerators.*;
 
 
+
 public class ServerStrategyGenerateMaze implements IServerStrategy {
     @Override
     public void serverStrategy(InputStream inFromClient, OutputStream outToClient) {
@@ -12,6 +13,7 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             ObjectOutputStream toClient = new ObjectOutputStream(outToClient);
             toClient.flush();
             int [] dim = (int[])fromClient.readObject();
+
             Maze m;
             if (Server.Configurations.getProperty("mazeType").equals("simpleMaze")) {
                 m = new SimpleMazeGenerator().generate(dim[0], dim[1]);
@@ -20,6 +22,7 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
                 m = new MyMazeGenerator().generate(dim[0], dim[1]);
             }
             byte[] toSend = m.toByteArray();
+
             ByteArrayOutputStream arr = new ByteArrayOutputStream();
             MyCompressorOutputStream compress = new MyCompressorOutputStream(arr);
             compress.write(toSend);
