@@ -86,6 +86,7 @@ public class Server {
         public static void setProperty(String key, String value) {
             try {
                 outToFile = new FileOutputStream(workingDirectory + propertyFileDirectory + "config.properties");
+                outToFile.flush();
                 property.setProperty(key, value);
                 property.store(outToFile, "");
                 outToFile.flush();
