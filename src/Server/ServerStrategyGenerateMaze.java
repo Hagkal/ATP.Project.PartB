@@ -1,8 +1,8 @@
 package Server;
 import java.io.*;
 import IO.*;
-import algorithms.mazeGenerators.Maze;
-import algorithms.mazeGenerators.MyMazeGenerator;
+import algorithms.mazeGenerators.*;
+
 
 
 public class ServerStrategyGenerateMaze implements IServerStrategy {
@@ -13,7 +13,14 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             ObjectOutputStream toClient = new ObjectOutputStream(outToClient);
             toClient.flush();
             int [] dim = (int[])fromClient.readObject();
-            Maze m = new MyMazeGenerator().generate(dim[0], dim[1]);
+
+            Maze m;
+            if (Server.Configurations.getProperty("mazeType").equals("simpleMaze")) {
+                m = new SimpleMazeGenerator().generate(dim[0], dim[1]);
+            }
+            else {
+                m = new MyMazeGenerator().generate(dim[0], dim[1]);
+            }
             byte[] toSend = m.toByteArray();
 
             ByteArrayOutputStream arr = new ByteArrayOutputStream();
@@ -21,7 +28,6 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             compress.write(toSend);
             compress.flush();
             compress.close();
-
 
             toClient.writeObject(arr.toByteArray());
             

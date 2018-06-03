@@ -4,13 +4,12 @@ import Server.IServerStrategy;
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.SocketTimeoutException;
+import java.util.Properties;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.*;
-
 
 public class Server {
     private int port;
@@ -50,8 +49,10 @@ public class Server {
                     //LOG.debug("SocketTimeout - No clients pending!");
                 }
             }
+
             threadPoolExecutor.shutdown();
             server.close();
+
         } catch (IOException e) {
             //LOG.error("IOException", e);
         }
@@ -73,5 +74,43 @@ public class Server {
     public void stop() {
         //LOG.info("Stopping server..");
         stop = true;
+    }
+
+    public static class Configurations {
+        private static String workingDirectory = System.getProperty("user.dir");
+        private static String propertyFileDirectory = "\\Resources\\";
+        private static InputStream inFromFile;
+        private static OutputStream outToFile;
+        private static Properties property = new Properties();
+
+        public static void setProperty(String key, String value) {
+            try {
+                outToFile = new FileOutputStream(workingDirectory + propertyFileDirectory + "config.properties");
+                outToFile.flush();
+                property.setProperty(key, value);
+                property.store(outToFile, "");
+                outToFile.flush();
+                outToFile.close();
+            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static String getProperty(String key) {
+            String toReturn = "";
+            try {
+                inFromFile = new FileInputStream(workingDirectory + propertyFileDirectory + "config.properties");
+                property.load(inFromFile);
+                toReturn = property.getProperty(key, "");
+                inFromFile.close();
+
+            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return toReturn;
+        }
+
     }
 }

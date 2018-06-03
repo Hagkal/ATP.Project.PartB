@@ -3,7 +3,6 @@ package Server;
 import algorithms.mazeGenerators.Maze;
 import algorithms.search.*;
 import sun.awt.Mutex;
-
 import java.io.*;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +16,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         mutexMap = new ConcurrentHashMap<>();
     }
 
+  
     @Override
     public void serverStrategy(InputStream inFromClient, OutputStream outToClient) {
         try{
@@ -27,6 +27,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
             // getting the maze from the client and solving him
             Maze toSolve = (Maze) fromClient.readObject();
             ISearchingAlgorithm searcher = new BestFirstSearch();
+
             byte[] byteStyle = toSolve.toByteArray();
             int hash = Arrays.hashCode(byteStyle);
             File properMaze = new File("" + hash);
@@ -60,6 +61,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
                 ObjectOutputStream solWriter = new ObjectOutputStream(new FileOutputStream(properMaze));
                 solWriter.flush();
                 solWriter.writeObject(sol);
+                solWriter.flush();
                 solWriter.close();
             }
             mutexMap.get(hash).unlock();
