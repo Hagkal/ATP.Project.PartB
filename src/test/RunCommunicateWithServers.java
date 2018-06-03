@@ -32,10 +32,10 @@ public class RunCommunicateWithServers {
 
         //Starting  servers
         solveSearchProblemServer.start();
-        //mazeGeneratingServer.start();
+        mazeGeneratingServer.start();
 
         //Communicating with servers
-        //CommunicateWithServer_MazeGenerating();
+        CommunicateWithServer_MazeGenerating();
         CommunicateWithServer_SolveSearchProblem();
 
         Thread[] t = new Thread[50];
@@ -70,9 +70,10 @@ public class RunCommunicateWithServers {
 
                         toServer.writeObject(mazeDimensions); //send maze dimensions to server
                         toServer.flush();
+
                         byte[] compressedMaze = (byte[]) fromServer.readObject(); //read generated maze (compressed with MyCompressor) from server
                         InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
-                        byte[] decompressedMaze = new byte[1000 /*CHANGE SIZE ACCORDING TO YOU MAZE SIZE*/]; //allocating byte[] for the decompressed maze -
+                        byte[] decompressedMaze = new byte[2600 /*CHANGE SIZE ACCORDING TO YOU MAZE SIZE*/]; //allocating byte[] for the decompressed maze -
                         is.read(decompressedMaze); //Fill decompressedMaze with bytes
                         Maze maze = new Maze(decompressedMaze);
                         maze.print();
@@ -99,8 +100,22 @@ public class RunCommunicateWithServers {
                         ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
                         ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
                         toServer.flush();
-                        MyMazeGenerator mg = new MyMazeGenerator();
-                        ISearchingAlgorithm search = new BestFirstSearch();
+
+                        ISearchingAlgorithm searcher;
+                        String searchingAlgorithm = Server.Configurations.getProperty("searchingAlgorithm");
+                        switch (searchingAlgorithm){
+                            case "BreadthFirstSearch":
+                                searcher = new BreadthFirstSearch();
+                                break;
+                            case "BestFirstSearch":
+                                searcher = new BestFirstSearch();
+                                break;
+                            case "DepthFirstSearch":
+                                searcher = new DepthFirstSearch();
+                                break;
+                            default:
+                                searcher = new BestFirstSearch();
+                        }
                         /*int [][] m = {
                                 {0,0,0},
                                 {1,0,1},
@@ -128,7 +143,7 @@ public class RunCommunicateWithServers {
                         toServer.writeObject(maze); //send maze to server
                         toServer.flush();
                         Solution mazeSolution = (Solution) fromServer.readObject(); //read generated maze (compressed with MyCompressor) from server
-                        Solution comp = search.solve(new SearchableMaze(maze));
+                        Solution comp = searcher.solve(new SearchableMaze(maze));
                         /*
                         //Print Maze Solution retrieved from the server
                         System.out.println(String.format("Solution steps: %s", mazeSolution));

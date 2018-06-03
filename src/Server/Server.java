@@ -1,9 +1,5 @@
 package Server;
 
-import Server.IServerStrategy;
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
-
 import java.io.*;
 import java.net.SocketTimeoutException;
 import java.util.Properties;
@@ -24,8 +20,13 @@ public class Server {
         this.port = port;
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
+
+        //getting number of threads to run
+        String numOfThreads = Server.Configurations.getProperty("numOfThreads");
+        int threads = 8; //Integer.parseInt(numOfThreads);  // DOES NOT WORK WITH SUBMISSION SYSTEM
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        //  threadPoolExecutor.setCorePoolSize(6);
+        if (threads != 0)
+            threadPoolExecutor.setCorePoolSize(threads);
     }
 
     public void start() {
@@ -82,6 +83,7 @@ public class Server {
         private static InputStream inFromFile;
         private static OutputStream outToFile;
         private static Properties property = new Properties();
+        private static final Object o = new Object();
 
         public static void setProperty(String key, String value) {
             try {
@@ -100,10 +102,12 @@ public class Server {
         public static String getProperty(String key) {
             String toReturn = "";
             try {
-                inFromFile = new FileInputStream(workingDirectory + propertyFileDirectory + "config.properties");
-                property.load(inFromFile);
-                toReturn = property.getProperty(key, "");
-                inFromFile.close();
+                synchronized (o) {
+                    inFromFile = new FileInputStream(workingDirectory + propertyFileDirectory + "config.properties");
+                    property.load(inFromFile);
+                    toReturn = property.getProperty(key, "");
+                    inFromFile.close();
+                }
 
             } catch (FileNotFoundException e) {
             } catch (IOException e) {
