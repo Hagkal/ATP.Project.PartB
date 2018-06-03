@@ -18,7 +18,7 @@ public class Server {
     private IServerStrategy serverStrategy;
     private volatile boolean stop;
     //private static final Logger LOG = LogManager.getLogger(); //Log4j2
-    ThreadPoolExecutor threadPoolExecutor;
+    private ThreadPoolExecutor threadPoolExecutor;
 
 
     public Server(int port, int listeningInterval, IServerStrategy serverStrategy) {
@@ -45,14 +45,13 @@ public class Server {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
                     //LOG.info(String.format("Client excepted: %s", clientSocket.toString()));
-                    //threadPoolExecutor.execute(new Thread(() -> handleClient(clientSocket)));
-                    handleClient(clientSocket);
+                    threadPoolExecutor.execute(new Thread(() -> handleClient(clientSocket)));
                 } catch (SocketTimeoutException e) {
                     //LOG.debug("SocketTimeout - No clients pending!");
                 }
             }
-            server.close();
             threadPoolExecutor.shutdown();
+            server.close();
         } catch (IOException e) {
             //LOG.error("IOException", e);
         }

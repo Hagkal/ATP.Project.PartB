@@ -2,6 +2,7 @@ package algorithms.search;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Solution implements Serializable {
 
@@ -28,4 +29,15 @@ public class Solution implements Serializable {
      */
     public ArrayList<AState> getSolutionPath(){return m_solutionPath;}
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Solution))
+            return false;
+
+        Solution s = (Solution) obj;
+        return m_solutionPath.containsAll(s.m_solutionPath)
+                && m_solutionPath.size() == s.m_solutionPath.size();
+
+    }
 }
