@@ -26,7 +26,22 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
 
             // getting the maze from the client and solving him
             Maze toSolve = (Maze) fromClient.readObject();
-            ISearchingAlgorithm searcher = new BestFirstSearch();
+            ISearchingAlgorithm searcher;
+            String searchingAlgorithm = Server.Configurations.getProperty("searchingAlgorithm");
+            switch (searchingAlgorithm){
+                case "BreadthFirstSearch":
+                    searcher = new BreadthFirstSearch();
+                    break;
+                case "BestFirstSearch":
+                    searcher = new BestFirstSearch();
+                    break;
+                case "DepthFirstSearch":
+                    searcher = new DepthFirstSearch();
+                    break;
+                default:
+                    searcher = new BestFirstSearch();
+            }
+
 
             byte[] byteStyle = toSolve.toByteArray();
             int hash = Arrays.hashCode(byteStyle);

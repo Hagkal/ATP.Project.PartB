@@ -24,8 +24,14 @@ public class Server {
         this.port = port;
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
+        //getting number of threads to run
+        String numOfThreads = Server.Configurations.getProperty("numOfThreads");
+        int threads = Integer.parseInt(numOfThreads);
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
-        //  threadPoolExecutor.setCorePoolSize(6);
+        if (threads == 0)
+            threadPoolExecutor.setCorePoolSize(1);
+        else
+            threadPoolExecutor.setCorePoolSize(threads);
     }
 
     public void start() {
